@@ -2,9 +2,8 @@ import React from "react";
 import Tweat from "./Tweat";
 import { getDocs, query, where } from "firebase/firestore";
 import { tweatCollectionRef, usersCollectionRef } from "@/configs/firebase";
-type Props = {};
 
-async function TweatList({}: Props) {
+async function TweatList() {
   const response = await getDocs(tweatCollectionRef);
   const tweats = response.docs.map((doc) => {
     const tweat = doc.data();

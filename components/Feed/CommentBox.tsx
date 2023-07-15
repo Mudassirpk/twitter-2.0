@@ -5,8 +5,8 @@ import Comments from "./Comments";
 import { useAuth } from "@/context/authContext";
 import { iComment, iCommentWithUser } from "@/types";
 import Loading from "@/helper/Loading";
-import { addComment } from "@/services/comments";
-import { getCommentsWithUser } from "@/services/comments";
+import { addComment } from "@/services/tweats/comments";
+import { getCommentsWithUser } from "@/services/tweats/comments";
 
 type Props = { tweatId: string; tweatComments: iComment[] };
 
