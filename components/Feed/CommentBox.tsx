@@ -14,7 +14,9 @@ function CommentBox({ tweatId, tweatComments }: Props) {
   const authStore = useAuth();
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [clientComments, setClientComments] = useState<iCommentWithUser[]>([]);
+  const [clientComments, setClientComments] = useState<
+    iCommentWithUser[] | null
+  >(null);
 
   async function sendComment(e: React.SyntheticEvent) {
     e.preventDefault();
@@ -27,7 +29,11 @@ function CommentBox({ tweatId, tweatComments }: Props) {
           comment
         );
         if (commentAdded) {
-          setClientComments([...clientComments, commentAdded]);
+          if (clientComments) {
+            setClientComments([...clientComments, commentAdded]);
+          } else {
+            setClientComments([commentAdded]);
+          }
           setIsLoading(false);
           setComment("");
         }

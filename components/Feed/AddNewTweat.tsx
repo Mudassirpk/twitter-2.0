@@ -1,10 +1,10 @@
 "use client";
 import React, {
   ChangeEvent,
-  useState,
   useContext,
-  useRef,
   useEffect,
+  useRef,
+  useState,
 } from "react";
 import Image from "next/image";
 import user_image from "@/public/profile.jpg";
@@ -18,6 +18,8 @@ import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 
 import { tweatContext } from "@/context/tweatContext";
 import Loading from "@/helper/Loading";
+import ImageSelectorModal from "./ImageSelectorModal";
+import { uploadImage } from "@/services/tweats/image";
 
 type Props = {};
 
@@ -25,29 +27,34 @@ function AddNewTweat({}: Props) {
   const authContext = useAuth();
   const tweatStore = useContext(tweatContext);
   const [isLoading, setIsLoading] = useState(false);
-  const [focused, setFocused] = useState<boolean>(false);
-  const [image, setImage] = useState<File | null>(null);
+
+  const [image, setImage] = useState<{
+    image: File | null;
+    preview: string | ArrayBuffer;
+  } | null>(null);
+
   const [tweatText, setTweatText] = useState<string>("");
   const tweatBoxRef = useRef<HTMLTextAreaElement>(null);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
   const createTweat = async () => {
     if (tweatText.length > 0) {
       try {
-        const description = tweatText;
         if (authContext?.user) {
           setIsLoading(true);
           // the new tweet
           const newTweet = {
             comments: [],
             createdAt: { nanoseconds: 0, seconds: 0 },
-            description: description,
+            description: tweatText,
             from: authContext.user.uid,
-            image: { filekey: "", fileurl: "" },
+            image: image?.image ? await uploadImage(image.image) : null,
             likes: [],
             uid: "",
           };
           // add the tweet to firestore
           const response = await addDoc(tweatCollectionRef, newTweet);
-          // setup the new tweet for client tweet list
+          // set up the new tweet for client tweet list
           const newClientTweet: iTweat = {
             ...newTweet,
             from_data: {
@@ -61,6 +68,7 @@ function AddNewTweat({}: Props) {
             uid: response.id,
           };
           setTweatText("");
+          setImage(null)
           // set the client tweet list
           if (tweatStore?.tweats) {
             tweatStore?.setTweats([newClientTweet, ...tweatStore.tweats]);
@@ -79,23 +87,18 @@ function AddNewTweat({}: Props) {
 
   // handle emoji functionality
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
-  const [cursorPosition, setCursorPostion] = useState<number>();
-  function getEmoji({ emoji }: EmojiClickData, e: MouseEvent) {
-    const textarea = e.target as HTMLTextAreaElement;
-    textarea.focus();
-    const start = tweatText.substring(0, textarea.selectionStart);
-    const end = tweatText.substring(textarea.selectionStart);
-    const text = start + emoji + end;
-    setTweatText(text);
-    setCursorPostion(start.length + emoji.length);
-    console.log(emoji);
-  }
 
-  useEffect(() => {
-    if (tweatBoxRef.current && tweatBoxRef) {
-      tweatBoxRef.current.selectionEnd = cursorPosition as number;
+  function getEmoji({ emoji }: EmojiClickData, e: MouseEvent) {
+    const textAreaElement = tweatBoxRef.current;
+    if (textAreaElement) {
+      const textAreaValue = textAreaElement.value;
+      setTweatText(
+        textAreaValue.substring(0, textAreaElement.selectionStart) +
+          emoji +
+          textAreaValue.substring(textAreaElement.selectionEnd)
+      );
     }
-  }, [cursorPosition]);
+  }
 
   return (
     <div className="w-full border-b border-tweater-gray-dim my-10 flex gap-4">
@@ -122,12 +125,32 @@ function AddNewTweat({}: Props) {
             className={` outline-none border-none w-full text-[1.8rem] text-black`}
           ></textarea>
         </div>
+        {/* image preview for the new tweat */}
+        {image ? (
+          <div className="w-full relative aspect-video">
+            <Image
+              className="object-cover rounded-[2rem]"
+              alt="tweat preview image"
+              src={image?.preview as string}
+              fill={true}
+            />
+          </div>
+        ) : null}
         <div className="w-full flex gap-2 items-center justify-between pl-4 py-2">
           <div className="flex gap-2 items-center">
             {" "}
             <div className="p-4 rounded-full cursor-pointer hover:bg-[rgba(29,155,240,.1)]">
-              <FaRegImage fontSize={18} color="rgb(29,155,240)" />
-              {/* <ImageSelectorModal returnImage={setImage} /> */}
+              <FaRegImage
+                onClick={() => setIsImageModalOpen(!isImageModalOpen)}
+                fontSize={18}
+                color="rgb(29,155,240)"
+              />
+              {isImageModalOpen ? (
+                <ImageSelectorModal
+                  exitModal={setIsImageModalOpen}
+                  returnImage={setImage}
+                />
+              ) : null}
             </div>
             {/* emoji section */}
             <div className="relative w-auto h-auto">

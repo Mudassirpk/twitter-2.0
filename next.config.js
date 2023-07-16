@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["lh3.googleusercontent.com", "1.bp.blogspot.com"],
+    domains: [
+      "lh3.googleusercontent.com",
+      "1.bp.blogspot.com",
+      "uploadthing.com",
+    ],
   },
   async headers() {
     return [

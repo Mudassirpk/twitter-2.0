@@ -2,7 +2,7 @@ import React from "react";
 import Comment from "./Comment";
 import { iCommentWithUser } from "@/types";
 import Loading from "@/helper/Loading";
-type Props = { comments: iCommentWithUser[] };
+type Props = { comments: iCommentWithUser[]|null };
 
 function Comments({ comments }: Props) {
   return (
@@ -16,7 +16,7 @@ function Comments({ comments }: Props) {
       <h2 className="text-[1.8rem] font-semibold text-tweater-gray-normal">
         Comments
       </h2>
-      {comments && comments.length > 0 ? (
+      {comments ? (
         comments.map((comment: iCommentWithUser) => (
           <Comment
             text={comment.text}

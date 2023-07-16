@@ -3,8 +3,6 @@ import {iComment} from "@/types";
 import React, {useEffect, useState} from "react";
 import {AiOutlineHeart} from "react-icons/ai";
 import {FaRegComment} from "react-icons/fa";
-import {doc, updateDoc, arrayUnion, arrayRemove} from "firebase/firestore";
-import {db} from "@/configs/firebase";
 import {useAuth} from "@/context/authContext";
 import Loading from "@/helper/Loading";
 import CommentBox from "./CommentBox";
@@ -34,12 +32,17 @@ function ActionBlock({likes, comments, tweatId}: Props) {
                     if (likeAdded) {
                         setClientLikes([...clientLikes, likeAdded]);
                         setIsLoading(false);
+                    } else {
+                        setIsLoading(false)
+                        console.log('Error while updating likes')
                     }
                 } else {
                     const updatedLikes = await updateLike(tweatId, authContext.user, likes);
                     if (updatedLikes) {
                         setClientLikes(updatedLikes);
                         setIsLoading(false);
+                    } else {
+                        console.log('Error while updating likes')
                     }
                 }
             }
@@ -52,7 +55,7 @@ function ActionBlock({likes, comments, tweatId}: Props) {
     useEffect(() => {
         setClientLikes(likes);
         setClientComments(comments);
-    }, []);
+    }, [comments, likes]);
 
     useEffect(() => {
         if (authContext?.user && clientLikes.includes(authContext?.user?.uid)) {
@@ -60,7 +63,7 @@ function ActionBlock({likes, comments, tweatId}: Props) {
         } else {
             setIsLiked(false);
         }
-    }, [clientLikes]);
+    }, [clientLikes, authContext?.user]);
 
     return (
         <>

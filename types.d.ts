@@ -19,16 +19,13 @@ interface iCommentWithUser extends iComment {
     email: string;
     name: string;
     photo: string;
-    uid:string
+    uid: string;
   };
 }
 
 interface iTweat {
   description: string;
-  image: {
-    fileurl: string;
-    filekey: string;
-  };
+  image: null | { fileKey: string; fileUrl: string } | undefined;
   from_data: {
     email: string;
     name: string;
@@ -44,5 +41,5 @@ interface iTweat {
   };
   likes: [string] | never[];
   uid: string;
-  comments: [Comment] | never[];
+  comments: [iComment] | never[];
 }
