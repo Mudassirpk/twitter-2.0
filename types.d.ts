@@ -2,12 +2,16 @@ import { User } from "firebase/auth";
 import { SetStateAction } from "react";
 
 export interface iAuthContext {
-  user: User | null;
-  setUser: React.Dispatch<SetStateAction<User | null>>;
+  user: tTwitterUser | null;
+  setUser: React.Dispatch<SetStateAction<tTwitterUser | null>>;
   signIn: (email: string, password: string) => void;
 }
 
-type twitterUser = User & {};
+type tTwitterUser = User & {
+  followers: [string] | [];
+  following: [string] | [];
+  docId: string;
+};
 
 interface iComment {
   from: string;
@@ -33,6 +37,7 @@ interface iTweat {
     photo: string;
     followers: [string] | [];
     following: [string] | [];
+    docId: string;
   };
   from: string;
   createdAt: {

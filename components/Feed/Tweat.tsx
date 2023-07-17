@@ -5,22 +5,16 @@ import { BsDot } from "react-icons/bs";
 import { DocumentData } from "firebase/firestore";
 import { iTweat } from "@/types";
 import ActionBlock from "./ActionBlock";
+import FollowButton from "./FollowButton";
 
 type Props = {
   data: DocumentData | iTweat;
 };
 
 export default function Tweat({ data }: Props) {
-  const {
-    comments,
-    createdAt,
-    description,
-    from,
-    from_data,
-    image,
-    likes,
-    uid,
-  } = data as iTweat;
+  const { comments, description, from_data, image, likes, uid } =
+    data as iTweat;
+console.log('di: ',from_data.docId)
   return (
     <div className="flex gap-4 my-8 border-b border-tweater-gray-dark items-start">
       <div className="relative min-w-[3.6rem] w-[3.6rem] h-[3.6rem]">
@@ -32,12 +26,16 @@ export default function Tweat({ data }: Props) {
         />
       </div>
       <div className="w-full">
-        <p className="flex text-[1.4rem] gap-2 items-center">
-          <span className="text-black font-bold">{from_data.name}</span>{" "}
-          <span className="text-tweater-gray-normal flex gap-1 items-center">
-            @{data.from_data.name} <BsDot /> 4m
-          </span>
-        </p>
+        <div className="w-full flex items-center justify-between min-h-[3.6rem]">
+          <p className="flex text-[1.4rem] gap-2 items-center">
+            <span className="text-black font-bold">{from_data.name}</span>{" "}
+          </p>
+          <FollowButton
+            fromUserId={from_data.uid}
+            fromDocId={from_data.docId}
+          />
+        </div>
+
         <p className="mt-1 text-[1.4rem] mb-4">{description}</p>
         {image && image.fileUrl.length > 0 ? (
           <div className="relative w-full aspect-video">

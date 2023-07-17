@@ -42,6 +42,7 @@ function AddNewTweat({}: Props) {
       try {
         if (authContext?.user) {
           setIsLoading(true);
+
           // the new tweet
           const newTweet = {
             comments: [],
@@ -52,8 +53,10 @@ function AddNewTweat({}: Props) {
             likes: [],
             uid: "",
           };
+
           // add the tweet to firestore
           const response = await addDoc(tweatCollectionRef, newTweet);
+
           // set up the new tweet for client tweet list
           const newClientTweet: iTweat = {
             ...newTweet,
@@ -64,11 +67,14 @@ function AddNewTweat({}: Props) {
               uid: authContext.user.uid,
               followers: [],
               following: [],
+              docId: authContext.user.docId,
             },
             uid: response.id,
           };
+
           setTweatText("");
-          setImage(null)
+          setImage(null);
+
           // set the client tweet list
           if (tweatStore?.tweats) {
             tweatStore?.setTweats([newClientTweet, ...tweatStore.tweats]);
