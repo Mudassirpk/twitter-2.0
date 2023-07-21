@@ -1,11 +1,5 @@
 "use client";
-import React, {
-  ChangeEvent,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEvent, useContext, useRef, useState } from "react";
 import Image from "next/image";
 import user_image from "@/public/profile.jpg";
 import { FaRegImage } from "react-icons/fa";
@@ -20,10 +14,13 @@ import { tweatContext } from "@/context/tweatContext";
 import Loading from "@/helper/Loading";
 import ImageSelectorModal from "./ImageSelectorModal";
 import { uploadImage } from "@/services/tweats/image";
+import Link from "next/link";
 
-type Props = {};
+type Props = {
+  currentProfileId?: string;
+};
 
-function AddNewTweat({}: Props) {
+function AddNewTweat({ currentProfileId }: Props) {
   const authContext = useAuth();
   const tweatStore = useContext(tweatContext);
   const [isLoading, setIsLoading] = useState(false);
@@ -106,18 +103,28 @@ function AddNewTweat({}: Props) {
     }
   }
 
+  if (currentProfileId && authContext?.user?.uid !== currentProfileId)
+    return null;
+
   return (
     <div className="w-full border-b border-tweater-gray-dim my-10 flex gap-4">
       <div className="relative rounded-full overflow-hidden min-w-[3.6rem] h-[3.6rem]">
-        <Image
-          src={
-            authContext?.user?.photoURL
-              ? authContext?.user?.photoURL
-              : user_image
-          }
-          alt="user image"
-          fill={true}
-        />
+        <Link
+          href={{
+            pathname: "/profile",
+            query: { user: authContext?.user?.uid },
+          }}
+        >
+          <Image
+            src={
+              authContext?.user?.photoURL
+                ? authContext?.user?.photoURL
+                : user_image
+            }
+            alt="user image"
+            fill={true}
+          />
+        </Link>
       </div>
       <div className="w-full">
         <div className="w-full py-2 h-auto min-h-[3.6rem]">

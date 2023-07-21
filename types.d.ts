@@ -8,6 +8,10 @@ export interface iAuthContext {
 }
 
 type tTwitterUser = User & {
+  name: string;
+  email: string;
+  uid: string;
+  photo: string;
   followers: [string] | [];
   following: [string] | [];
   docId: string;

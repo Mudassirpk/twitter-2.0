@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 type Props = {};
 import { useAuth } from "@/context/authContext";
@@ -8,9 +8,12 @@ import { BsThreeDots } from "react-icons/bs";
 import ProfileModal from "./ProfileModal";
 function Profile({}: Props) {
   const authContext = useAuth();
+
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
   return (
     <div className="relative mt-auto sm:hidden cursor-pointer w-full xl:w-auto flex items-center justify-between gap-4 px-6 py-4 rounded-[2.5rem] hover:bg-tweater-gray-medium">
-      <ProfileModal />
+      {isProfileModalOpen ? <ProfileModal /> : null}
       <div className="flex gap-4 items-center">
         <div className="relative h-[3.6rem] w-[3.6rem]">
           <Image
@@ -34,7 +37,10 @@ function Profile({}: Props) {
         </div>
       </div>
 
-      <BsThreeDots className="xl:hidden text-[2.5rem]" />
+      <BsThreeDots
+        onClick={() => setIsProfileModalOpen(!isProfileModalOpen)}
+        className="xl:hidden text-[2.5rem]"
+      />
     </div>
   );
 }

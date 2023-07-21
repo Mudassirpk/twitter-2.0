@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Tab from "./Tab";
+import Tab from "../ui/Tab";
 import Image from "next/image";
 import Link from "next/link";
 import { GrTwitter } from "react-icons/gr";
@@ -10,7 +10,7 @@ import { useAuth } from "@/context/authContext";
 export default function FeedHeader({}) {
   const authContext = useAuth();
   return (
-    <div >
+    <div>
       <div
         className={`hidden sm:flex w-full items-center pt-2 border-b border-tweater-gray-dim`}
       >
@@ -32,7 +32,7 @@ export default function FeedHeader({}) {
         </Link>
       </div>
       <h1 className="text-[1.8rem] font-bold py-6">Home</h1>
-      <Tab title="Tweats" />
+      <Tab title="Tweats" selected={true} />
     </div>
   );
 }
